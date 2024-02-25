@@ -1,4 +1,4 @@
-use std::{path::Path, time::Duration};
+use std::{ops::Not, path::Path, time::Duration};
 
 use reqwest::ClientBuilder;
 use serde::{Deserialize, Serialize};
@@ -8,12 +8,44 @@ use tokio::{
     join,
 };
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct LintItem {
+#[derive(Clone)]
+#[derive(Debug)]
+#[derive(Default)]
+#[derive(PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
+pub struct LintItem {
     #[serde(default)]
-    id:    String,
+    pub id:            String,
     #[serde(default)]
-    level: String,
+    pub id_span:       IdSpan,
+    #[serde(default)]
+    pub group:         String,
+    #[serde(default)]
+    pub level:         String,
+    #[serde(default)]
+    pub docs:          String,
+    #[serde(default)]
+    pub version:       String,
+    #[serde(default)]
+    pub applicability: Applicability,
+}
+#[derive(Clone)]
+#[derive(Debug)]
+#[derive(Default)]
+#[derive(PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
+pub struct Applicability {
+    pub is_multi_part_suggestion: bool,
+    pub applicability:            String,
+}
+#[derive(Clone)]
+#[derive(Debug)]
+#[derive(Default)]
+#[derive(PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
+pub struct IdSpan {
+    pub path: String,
+    pub line: i64,
 }
 
 pub async fn get_lint() -> anyhow::Result<()> {
@@ -41,7 +73,7 @@ pub async fn get_lint() -> anyhow::Result<()> {
         (lint_items?, output_f?, snippet_str?);
 
     for ele in &lint_items {
-        if ele.level == "allow" && !snippet_str.contains(&ele.id) {
+        if ele.level == "allow" && snippet_str.contains(&ele.id).not() {
             output_f
                 .write_all(format!("{} = \"warn\"\n", ele.id).as_bytes())
                 .await?;
