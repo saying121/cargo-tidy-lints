@@ -4,7 +4,10 @@ use anyhow::Result;
 use reqwest::ClientBuilder;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
+#[derive(Default)]
+#[derive(PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub struct LintItem {
     #[serde(default)]
     id: String,
@@ -41,6 +44,14 @@ impl LintItem {
         self.level == "allow"
     }
 
+    pub fn is_warn(&self) -> bool {
+        self.level == "warn"
+    }
+
+    pub fn is_deny(&self) -> bool {
+        self.level == "deny"
+    }
+
     pub fn id(&self) -> &str {
         &self.id
     }
@@ -48,15 +59,52 @@ impl LintItem {
     pub fn level(&self) -> &str {
         &self.level
     }
+
+    pub fn version(&self) -> &str {
+        &self.version
+    }
+
+    pub fn docs(&self) -> &str {
+        &self.docs
+    }
+
+    pub fn group(&self) -> &str {
+        &self.group
+    }
+
+    pub const fn id_span(&self) -> &IdSpan {
+        &self.id_span
+    }
+
+    pub const fn applicability(&self) -> &Applicability {
+        &self.applicability
+    }
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug)]
+#[derive(Default)]
+#[derive(PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub struct Applicability {
-    pub is_multi_part_suggestion: bool,
-    pub applicability: String,
+    is_multi_part_suggestion: bool,
+    applicability: String,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+impl Applicability {
+    pub const fn is_multi_part_suggestion(&self) -> bool {
+        self.is_multi_part_suggestion
+    }
+
+    pub fn applicability(&self) -> &str {
+        &self.applicability
+    }
+}
+
+#[derive(Clone)]
+#[derive(Debug)]
+#[derive(Default)]
+#[derive(PartialEq, Eq)]
+#[derive(Serialize, Deserialize)]
 pub struct IdSpan {
     pub path: String,
     pub line: i64,

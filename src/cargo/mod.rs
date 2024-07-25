@@ -5,14 +5,23 @@ use cargo_toml::{Lints, Manifest, Workspace};
 pub struct CargoManifest(Manifest);
 
 impl CargoManifest {
-    pub fn build_workspace() -> Result<Self> {
+    pub fn load() -> Result<Self> {
         let path = crate::project_path::WorkspaceDir::workspace_manifest_path();
 
         let manifest: Manifest = Manifest::from_path(path)?;
 
         Ok(Self(manifest))
     }
-    pub fn build_crate() -> Result<Self> {
+
+    pub const fn is_workspace(&self) -> bool {
+        self.0.workspace.is_some()
+    }
+
+    pub const fn is_crate(&self) -> bool {
+        self.0.package.is_some()
+    }
+
+    pub fn crate_locate() -> Result<Self> {
         let path = crate::project_path::WorkspaceDir::crate_manifest_path();
 
         let manifest: Manifest = Manifest::from_path(path)?;
@@ -27,7 +36,7 @@ impl CargoManifest {
         }
     }
 
-    pub fn contains_lint(&self, lint: &str) -> bool {
+    pub fn crate_contains_lint(&self, lint: &str) -> bool {
         match &self.0.lints {
             Some(Lints { workspace, groups }) => {
                 if *workspace {

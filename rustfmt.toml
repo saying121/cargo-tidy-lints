@@ -6,6 +6,7 @@ imports_layout = "Mixed"
 imports_granularity = "Crate"
 chain_width = 35
 struct_lit_width = 35
+merge_derives = false
 
 # array_width                         = 60
 # attr_fn_like_width                  = 70
@@ -43,7 +44,6 @@ struct_lit_width = 35
 # match_arm_leading_pipes             = "Never"
 # match_block_trailing_comma          = true
 # max_width                           = 100
-# merge_derives                       = false
 # newline_style                       = "Auto"
 # normalize_comments                  = true
 # normalize_doc_attributes            = false
