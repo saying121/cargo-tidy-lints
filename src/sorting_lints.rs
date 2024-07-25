@@ -13,7 +13,11 @@ pub async fn sort_lint() -> Result<()> {
     let lint_items = LintItem::get_lints().await?;
 
     let mut allow_f = OpenOptions::new();
-    allow_f.create(true).read(true).write(true).truncate(true);
+    allow_f
+        .create(true)
+        .read(true)
+        .write(true)
+        .truncate(true);
 
     let mut not_allow_f = OpenOptions::new();
     not_allow_f
@@ -21,6 +25,10 @@ pub async fn sort_lint() -> Result<()> {
         .read(true)
         .write(true)
         .truncate(true);
+
+    let cargo = crate::cargo::CargoManifest::build_workspace()?;
+
+
 
     let (all_file, not_allow, snippet_str) = join!(
         allow_f.open("./default_allow.toml"),
