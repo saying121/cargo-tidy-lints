@@ -1,5 +1,5 @@
 [package]
-name    = "my_lints"
+name    = "cargo-tidy-lints"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 tokio   = { version = "^1", features = ["macros", "rt-multi-thread", "fs", "io-std", "io-util"] }
-reqwest = { version = "^0.11", features = ["gzip", "json"] }
+reqwest = { version = "^0.12", features = ["gzip", "json"] }
 anyhow  = { version = "^1" }
 serde   = { version = "^1", features = ["derive"] }
 rustix  = { version = "0.38.30", features = ["mm", "io_uring"] }

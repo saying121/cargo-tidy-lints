@@ -25,4 +25,5 @@ build_go/
 flamegraph/
 flamegraph.svg
 perf.data*
-allow.toml
+default_allow.toml
+default_warn_or_deny.toml

@@ -1,6 +1,7 @@
-use my_lints::get_lints;
+use my_lints::sorting_lints;
+
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    get_lints::get_lint().await
+    sorting_lints::sort_lint().await
 }
