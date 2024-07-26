@@ -14,16 +14,24 @@ tokio = { version = "^1", features = [
   "io-std",
   "io-util",
 ] }
-reqwest = { version = "^0.12", features = ["gzip", "json"] }
+reqwest = { version = "^0.12", features = ["json", "brotli"] }
 anyhow = { version = "^1" }
 serde = { version = "^1", features = ["derive"] }
 toml = { version = "^0.8" }
 cargo_toml = { version = "^0.20" }
+clap = { version = "^4" }
 
 [lints.rust]
 temporary_cstring_as_ptr = "deny"
 
 [lints.clippy]
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+restriction = { level = "warn", priority = -1 }
+
+perf = { level = "deny", priority = -1 }
+# suspicious = { level = "deny", priority = -1 }
+
 absurd_extreme_comparisons = "allow"
 
 empty_enum_variants_with_brackets = "warn"
@@ -48,7 +56,7 @@ string_lit_as_bytes = "warn"
 string_to_string = "warn"
 manual_string_new = "warn"
 inefficient_to_string = "warn"
-needless_raw_strings = "warn"
+# needless_raw_strings = "warn"
 
 filter_map_next = "warn"
 flat_map_option = "warn"
@@ -275,9 +283,3 @@ no_effect_underscore_binding = "warn"
 
 # exhaustive_enums   = "warn"
 # exhaustive_structs = "warn"
-
-[workspace.lints.rust]
-temporary_cstring_as_ptr = "deny"
-
-[workspace.lints.clippy]
-absurd_extreme_comparisons = "allow"
