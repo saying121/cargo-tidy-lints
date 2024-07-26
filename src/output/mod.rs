@@ -35,6 +35,12 @@ impl Output {
         WorkspaceDir::workspace_root().join(Self::WORKSPACE_DUPLICATE)
     }
 
+    pub fn workspace_group_path(gruop: &str) -> PathBuf {
+        WorkspaceDir::workspace_root().join(format!("target/{gruop}"))
+    }
+
+    /////
+
     pub fn crate_allow_path() -> PathBuf {
         WorkspaceDir::crate_root().join(Self::CRATE_ALLOW)
     }
@@ -48,5 +54,9 @@ impl Output {
 
     pub fn crate_duplicate_path() -> PathBuf {
         WorkspaceDir::crate_root().join(Self::CRATE_DUPLICATE)
+    }
+
+    pub fn crate_group_path(gruop: &str) -> PathBuf {
+        WorkspaceDir::crate_root().join(format!("target/{gruop}"))
     }
 }

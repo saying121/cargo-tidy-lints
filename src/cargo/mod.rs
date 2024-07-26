@@ -36,9 +36,17 @@ impl CargoManifest {
         match &self.0.workspace {
             Some(Workspace { lints: Some(lints), .. }) => lints
                 .get("clippy")
-                .map_or(false, |clippys| {
-                    clippys.contains_key(lint.id()) || clippys.contains_key(lint.group())
-                }),
+                .map_or(false, |clippys| clippys.contains_key(lint.id())),
+            _ => false,
+        }
+    }
+
+    /// is lint in group
+    pub fn workspace_contains_group(&self, lint: &LintItem) -> bool {
+        match &self.0.workspace {
+            Some(Workspace { lints: Some(lints), .. }) => lints
+                .get("clippy")
+                .map_or(false, |clippys| clippys.contains_key(lint.group())),
             _ => false,
         }
     }
@@ -103,6 +111,23 @@ impl CargoManifest {
         }
     }
 
+    /// is lint in group
+    pub fn crate_contains_group(&self, lint: &LintItem) -> bool {
+        match &self.0.lints {
+            Some(Lints { workspace, groups }) => {
+                // if inherit workspace
+                if *workspace {
+                    self.workspace_contains_lint(lint)
+                } else {
+                    groups
+                        .get("clippy")
+                        .map_or(false, |lints| lints.contains_key(lint.group()))
+                }
+            }
+            _ => false,
+        }
+    }
+
     pub fn crate_contains_lint(&self, lint: &LintItem) -> bool {
         match &self.0.lints {
             Some(Lints { workspace, groups }) => {
@@ -112,8 +137,8 @@ impl CargoManifest {
                 } else {
                     groups
                         .get("clippy")
-                        .map_or(false, |lints| {
-                            lints.contains_key(lint.id()) || lints.contains_key(lint.group())
+                        .map_or(false, |lints| -> bool {
+                            lints.contains_key(lint.id())
                         })
                 }
             }
@@ -148,7 +173,10 @@ impl CargoManifest {
         let (mut al_f, mut ne, mut dup, mut dep) = (al_f?, unne?, dup?, dep?);
 
         for lint in lints {
-            if lint.is_allow() && !self.workspace_contains_lint(lint) {
+            if lint.is_allow()
+                && !self.workspace_contains_lint(lint)
+                && !self.workspace_contains_group(lint)
+            {
                 al_f.write_all(lint.show(with_docs).as_bytes())
                     .await?;
             }
@@ -184,15 +212,18 @@ impl CargoManifest {
             options.open(dup),
             options.open(dep)
         );
-        let (mut al_f, mut ne, mut dup, mut dep) = (al_f?, unne?, dup?, dep?);
+        let (mut al_f, mut unne, mut dup, mut dep) = (al_f?, unne?, dup?, dep?);
 
         for lint in lints {
-            if lint.is_allow() && !self.crate_contains_lint(lint) {
+            if lint.is_allow()
+                && !self.crate_contains_lint(lint)
+                && !self.crate_contains_group(lint)
+            {
                 al_f.write_all(lint.show(with_docs).as_bytes())
                     .await?;
             }
             if !lint.is_allow() && self.crate_contains_lint(lint) {
-                ne.write_all(lint.show(with_docs).as_bytes())
+                unne.write_all(lint.show(with_docs).as_bytes())
                     .await?;
             }
             if self.crate_group_duplicate(lint) {
