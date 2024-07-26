@@ -32,9 +32,7 @@ nursery = { level = "warn", priority = -1 }
 trivial_regex = "allow" # see: <https://github.com/rust-lang/rust-clippy/issues/6690>
 
 ### pedantic group
-struct_field_names = "warn"
 inconsistent_struct_constructor = "warn"
-single_match_else = "warn"
 match_on_vec_items = "warn"
 match_same_arms = "warn"
 single_char_pattern = "warn"
@@ -146,7 +144,6 @@ ref_option_ref = "warn"
 pub_without_shorthand = "warn"
 panic_in_result_fn = "warn"
 format_push_string = "warn"
-string_add = "warn"
 str_to_string = "warn"
 string_to_string = "warn"
 
