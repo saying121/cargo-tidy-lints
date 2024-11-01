@@ -12,7 +12,7 @@ pub struct LintItem {
     #[serde(default)]
     id: String,
     #[serde(default)]
-    id_span: IdSpan,
+    id_location: Option<String>,
     #[serde(default)]
     group: String,
     #[serde(default)]
@@ -22,14 +22,14 @@ pub struct LintItem {
     #[serde(default)]
     version: String,
     #[serde(default)]
-    applicability: Applicability,
+    applicability: String,
 }
 
 impl LintItem {
     pub fn show(&self, with_docs: bool) -> String {
         let mut res = format!(
             "{} = \"{}\" # version: {}, applicability: {}, group: {}\n",
-            self.id, self.level, self.version, self.applicability.applicability, self.group
+            self.id, self.level, self.version, self.applicability, self.group
         );
 
         if with_docs {
@@ -93,11 +93,11 @@ impl LintItem {
         &self.group
     }
 
-    pub const fn id_span(&self) -> &IdSpan {
-        &self.id_span
+    pub fn id_location(&self) -> Option<&str> {
+        self.id_location.as_deref()
     }
 
-    pub const fn applicability(&self) -> &Applicability {
+    pub fn applicability(&self) -> &str {
         &self.applicability
     }
 }
@@ -121,21 +121,11 @@ impl Applicability {
     }
 }
 
-#[derive(Clone)]
-#[derive(Debug)]
-#[derive(Default)]
-#[derive(PartialEq, Eq)]
-#[derive(Serialize, Deserialize)]
-pub struct IdSpan {
-    pub path: String,
-    pub line: i64,
-}
-
 #[test]
 fn feature() {
     let item = LintItem {
         id: "absolute_paths".to_owned(),
-        id_span: IdSpan::default(),
+        id_location: None,
         group: "restriction".to_owned(),
         level: "allow".to_owned(),
         docs: r#"
@@ -175,10 +165,7 @@ This lint has the following configuration variables:
 - `absolute-paths-allowed-crates`: Which crates to allow absolute paths from (default: `[]`)- `absolute-paths-max-segments`: The maximum number of segments a path can have before being linted, anything above this will
    be linted. (default: `2`)"#.to_owned(),
         version: "1.73.0".to_owned(),
-        applicability: Applicability {
-            is_multi_part_suggestion: false,
             applicability: "Unresolved".to_owned()
-        }
     };
 
     let s = item.show(true);
